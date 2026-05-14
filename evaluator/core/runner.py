@@ -1,7 +1,8 @@
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from litellm import completion
+from litellm import completion, ModelResponse
+from typing import cast
 from google.genai import types
-from config import client, logger
+from core.config import client, logger
 
 def call_model(model, question):
   if model["provider"] == "google":
@@ -9,13 +10,13 @@ def call_model(model, question):
       model=model["model"],
       contents=question,
       config=types.GenerateContentConfig(
-        thinking_config=types.ThinkingConfig(thinking_level="high")
+        thinking_config=types.ThinkingConfig(thinking_level=types.ThinkingLevel.HIGH)
       ),
     )
     return model["model"], response.text
   elif model["provider"] == "litellm":
     messages = [{"role": "user", "content": question}]
-    response = completion(model=model["model"], messages=messages)
+    response = cast(ModelResponse, completion(model=model["model"], messages=messages))
     return model["model"], response.choices[0].message.content
   else:
     raise ValueError(f"Unsupported provider: {model['provider']}")

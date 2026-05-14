@@ -1,0 +1,9 @@
+{
+  "executionEnvironments": [
+    {
+      "root": "evaluator",
+      "venv": ".venv",
+      "venvPath": "evaluator"
+    }
+  ]
+}
